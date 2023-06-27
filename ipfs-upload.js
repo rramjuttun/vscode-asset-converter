@@ -53,7 +53,7 @@ async function _uploadFolder(folderPath, ipfsEndpoint, ipfsAuth, returnAll=false
         return returnAll ? uploads : JSON.parse(uploads[uploads.length-1]);
 
     } catch (error) {
-        console.error('Error uploading folder:', error);
+        console.error('Error:', error);
     }
 }
 
@@ -91,8 +91,6 @@ async function uploadAndMint(folderPath, jsonPath, ipfsEndpoint, ipfsAuth) {
 async function uploadOnly(folderPath, ipfsEndpoint, ipfsAuth) {
     return((await _uploadFolder(folderPath, ipfsEndpoint, ipfsAuth)));
 }
-
-//uploadAndMint("./images", "http://127.0.0.1:5001", "");
 
 module.exports = {
     uploadOnly,
