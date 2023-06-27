@@ -20,8 +20,24 @@
       {
         "command": "upload-extension.uploadAndMint",
         "title": "Upload Folder and Deploy ERC721 Contract"
+      },
+      {
+        "command": "upload-extension.testCommand",
+        "title": "Developer Test Commnd"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+          {
+              "command": "upload-extension.upload",
+              "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+          },
+          {
+            "command": "upload-extension.uploadAndMint",
+            "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+        }
+      ]
+  }
   },
   "scripts": {
     "lint": "eslint .",
