@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const { uploadOnly, uploadAndMint } = require('./ipfs-upload.js');
-const { processDotenv, makePath } = require('./helpers.js');
+const { processDotenv, makePath, checkArtifactDefault } = require('./helpers.js');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -8,16 +8,18 @@ const { processDotenv, makePath } = require('./helpers.js');
 async function activate(context) {
 	console.log('Congratulations, your extension "upload-extension" is now active!');
 	
-	let { ipfsEndpoint, ipfsAuth } = processDotenv();
-	if(!ipfsEndpoint) {
+	let { ipfsInstance, chainInstance } = processDotenv();
+	if(!ipfsInstance.endpoint) {
 		throw new Error('.env not found');
 	}
+
+	checkArtifactDefault(context.extensionPath);
 
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.upload', 
 		async function () {
 			vscode.window.showInformationMessage('Uploading folder to IPFS.');
 			const folderPath = makePath('./images');
-			const upload = await uploadOnly(folderPath, ipfsEndpoint, ipfsAuth);
+			const upload = await uploadOnly(folderPath, ipfsInstance);
 			console.log(`Folder Base URI: ipfs://${upload.Hash}`);
 		})
 	);
@@ -27,8 +29,7 @@ async function activate(context) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS and deploying smart contract.');
 			const folderPath = makePath('./images');
 			const jsonPath = makePath('./json');
-			const upload = await uploadAndMint(folderPath, jsonPath, ipfsEndpoint, ipfsAuth);
-			console.log(`JSON Base URI: ipfs://${upload.Hash}`);
+			const upload = await uploadAndMint(folderPath, jsonPath, ipfsInstance, chainInstance);
 		})
 	);
 }
