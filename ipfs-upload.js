@@ -67,7 +67,7 @@ function _createJSONFromIPFS(jsonDirectory, assets) {
 
     for(let i = 0; i < assets.length-1; i++) {
         let json = {};
-        asset = JSON.parse(assets[i]);
+        const asset = JSON.parse(assets[i]);
         const _path = asset.Name;
         const desc = _path.replace(/\.[^/.]+$/, ""); //trim file extension off
         
@@ -83,7 +83,7 @@ function _createJSONFromIPFS(jsonDirectory, assets) {
 async function uploadAndMint(folderPath, jsonPath, ipfsInstance, chainInstance) {
     try {
         const numImages = checkInputFolderOnlyImages(folderPath);
-        const uploadedAssets = await _uploadFolder(folderPath, ipfsInstance, returnAll=true);
+        const uploadedAssets = await _uploadFolder(folderPath, ipfsInstance, true);
 
         _createJSONFromIPFS(jsonPath, uploadedAssets);
         const uploadedJSON = await _uploadFolder(jsonPath, ipfsInstance);

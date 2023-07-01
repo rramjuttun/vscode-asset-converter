@@ -35,6 +35,10 @@
           {
             "command": "upload-extension.uploadAndMint",
             "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+          },
+          {
+            "command": "upload-extension.testCommand",
+            "when": "resourceScheme == 'file' && explorerResourceIsFolder"
         }
       ]
   }

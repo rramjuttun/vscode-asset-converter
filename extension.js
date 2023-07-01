@@ -21,6 +21,7 @@ async function activate(context) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS.');
 			const upload = await uploadOnly(folderURI.path, ipfsInstance);
 			console.log(`Folder URI: ipfs://${upload.Hash}`);
+			return upload.Hash;
 		})
 	);
 	
@@ -30,12 +31,13 @@ async function activate(context) {
 			const folderPath = folderURI.path
 			const jsonPath = makePath(path.join('./json', path.basename(folderPath)));
 			const upload = await uploadAndMint(folderPath, jsonPath, ipfsInstance, chainInstance);
+			console.log(upload)
 		})
 	);
 
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.testCommand', 
 		function(folderURI) {
-			console.log(folderURI.path);
+			console.log(folderURI);
 		})
 	);
 }
