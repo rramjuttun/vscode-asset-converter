@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 const { Web3 } = require('web3');
 
 async function deployContract(ethInstance, artifactPath, constructorArgs) {

@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const { uploadOnly, uploadAndMint } = require('./ipfs-upload.js');
-const { processDotenv, makePath, checkArtifactDefault } = require('./helpers.js');
+const { processDotenv, checkArtifactDefault } = require('./helpers.js');
 const path = require('path');
 const { updateJson } = require('./save-json.js')
 
@@ -56,7 +56,7 @@ async function activate(context) {
 			console.log(`JSON base URI: ${baseURI}`);
 			console.log(`Contract deployed to address ${contractAddress}`)
 		
-			jsonEntry = {
+			const jsonEntry = {
 				directory: path.relative(workspacePath, folderURI.path),
 				type: "ownable",
 				baseUri: baseURI,
