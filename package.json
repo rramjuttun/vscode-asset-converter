@@ -28,19 +28,29 @@
     ],
     "menus": {
       "explorer/context": [
-          {
-              "command": "upload-extension.upload",
-              "when": "resourceScheme == 'file' && explorerResourceIsFolder"
-          },
-          {
-            "command": "upload-extension.uploadAndMint",
-            "when": "resourceScheme == 'file' && explorerResourceIsFolder"
-          },
-          {
-            "command": "upload-extension.testCommand",
-            "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+        {
+          "command": "upload-extension.upload",
+          "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+        },
+        {
+          "command": "upload-extension.uploadAndMint",
+          "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+        },
+        {
+          "command": "upload-extension.testCommand",
+          "when": "resourceScheme == 'file' && explorerResourceIsFolder"
         }
-      ]
+      ],
+      "commandPalette": [
+        {
+            "command": "upload-extension.upload",
+            "when": "false"
+        },
+        {
+          "command": "upload-extension.uploadAndMint",
+          "when": "false"
+        } 
+    ]
   }
   },
   "scripts": {

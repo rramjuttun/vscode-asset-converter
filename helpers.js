@@ -1,4 +1,3 @@
-const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs-extra');
 const dotenv = require('dotenv');
@@ -6,7 +5,7 @@ const dotenv = require('dotenv');
 // Check if dotenv file exists in current workspace
 function processDotenv(workspace) {
     let ipfsEndpoint, ipfsAuth
-    const searchPath = makePath('.env')
+    const searchPath = path.join(workspace, '.env')
 
     if(searchPath && fs.existsSync(searchPath)) {
         dotenv.config({path: searchPath})
@@ -27,18 +26,8 @@ function processDotenv(workspace) {
     return({ ipfsInstance, chainInstance });
 }
 
-function makePath(relativePath) {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-
-    if(workspaceFolders && workspaceFolders.length > 0) {
-        const workspacePath = workspaceFolders[0].uri.fsPath;
-        return(path.join(workspacePath, relativePath))
-    }
-    return(null);
-}
-
-function checkArtifactDefault(sourcePath) {
-    const targetPath = makePath('artifacts');
+function checkArtifactDefault(sourcePath, workspace) {
+    const targetPath = path.join(workspace, 'artifacts');
     if (!fs.existsSync(targetPath)) {
         fs.copySync(path.join(sourcePath, '/artifacts/contracts/SimpleERC721.sol'), targetPath);
     }
@@ -63,7 +52,6 @@ function checkInputFolderOnlyImages(folder) {
 
 module.exports = {
     processDotenv,
-    makePath,
     checkArtifactDefault,
     checkInputFolderOnlyImages
 }

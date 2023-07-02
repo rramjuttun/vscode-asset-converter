@@ -3,7 +3,7 @@ const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
 const { deployContract } = require('./deploy.js');
-const { checkInputFolderOnlyImages, makePath } = require('./helpers.js')
+const { checkInputFolderOnlyImages } = require('./helpers.js')
 
 async function _uploadFolder(folderPath, ipfsInstance, returnAll=false) {
     const form = new FormData();
@@ -80,7 +80,7 @@ function _createJSONFromIPFS(jsonDirectory, assets) {
     }
 }
 
-async function uploadAndMint(folderPath, jsonPath, ipfsInstance, chainInstance) {
+async function uploadAndMint(folderPath, jsonPath, artifactPath, ipfsInstance, chainInstance) {
     try {
         const numImages = checkInputFolderOnlyImages(folderPath);
         const uploadedAssets = await _uploadFolder(folderPath, ipfsInstance, true);
@@ -88,18 +88,14 @@ async function uploadAndMint(folderPath, jsonPath, ipfsInstance, chainInstance) 
         _createJSONFromIPFS(jsonPath, uploadedAssets);
         const uploadedJSON = await _uploadFolder(jsonPath, ipfsInstance);
         const baseURI = 'ipfs://' + uploadedJSON.Hash+ '/';
-        console.log(`JSON Base URI: ${baseURI}`);
 
-        const artifactPath = makePath('artifacts/SimpleERC721.json')
         const constructorArgs = ["Collection 10", "AMG", baseURI, numImages];
         const contractAddress = await deployContract(chainInstance, artifactPath, constructorArgs);
-        console.log(`Contract deployed to ${contractAddress}`);
-        return(contractAddress);
+        return({ baseURI, contractAddress });
     } catch(error) {
         console.error(error.message)
         process.exitCode = 1;
     }
-    
 }
 
 async function uploadOnly(folderPath, ipfsInstance) {
