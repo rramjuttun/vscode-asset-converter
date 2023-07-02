@@ -99,7 +99,13 @@ async function uploadAndMint(folderPath, jsonPath, artifactPath, ipfsInstance, c
 }
 
 async function uploadOnly(folderPath, ipfsInstance) {
-    return((await _uploadFolder(folderPath, ipfsInstance)));
+    try {
+        const uri = await _uploadFolder(folderPath, ipfsInstance);
+        return uri;
+    } catch(error) {
+        console.error(error.message);;
+        process.exitCode = 1;
+    }
 }
 
 module.exports = {

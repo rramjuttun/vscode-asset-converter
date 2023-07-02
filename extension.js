@@ -19,7 +19,7 @@ async function activate(context) {
 		throw new Error('.env not found');
 	}
 
-
+	// Function to upload folder to IPFS. Can contain any file types and other folders too
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.upload', 
 		async function (folderURI) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS.');
@@ -34,13 +34,14 @@ async function activate(context) {
 				hash: upload.Hash,
 				uri: `/ipfs/${upload.Hash}`,
 			}
-			
-			// Overwrite previous directories if reuploaded
+		
 			updateJson(path.join(workspacePath, "/test.json"), jsonEntry);
 			return upload.Hash;
 		})
 	);
 	
+	// Function to upload folder to IPFS and deploy a ERC721 contract associated with it. 
+	// Folder can only contain png images and can not contain other folders
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.uploadAndMint', 
 		async function(folderURI) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS and deploying smart contract.');
@@ -62,7 +63,6 @@ async function activate(context) {
 				deployAddress: contractAddress
 			}
 
-			// Don't overwwrite previous entries if redeployed
 			updateJson(path.join(workspacePath, "/test.json"), jsonEntry)
 		})
 	);
@@ -70,6 +70,7 @@ async function activate(context) {
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.testCommand', 
 		function(folderURI) {
 			console.log(folderURI);
+			console.log(process.versions)
 		})
 	);
 }
