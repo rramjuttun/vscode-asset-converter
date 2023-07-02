@@ -1,65 +1,102 @@
-# upload-extension README
+# IPFS and NFT Extension for VS Code
 
-This is the README for your extension "upload-extension". After writing up a brief description, we recommend including the following sections.
+This is a VS Code extension for uploading project resources to IPFS and creating NFT Collections from them. Its main purpose is to help onboard game developers to the Web3 stack by providing a way to transition assets from traditional centralized storage to a decentralized environment. 
+
 
 ## Features
+* Upload common resource folders to IPFS 
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+* Create NFT collections from ownable asset folders
 
-For example if there is an image subfolder under your extension project workspace:
+## Requirements and Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+#### Note on Requirements
+The extension currently only works in a development environment since it has not yet been published. When running as developer, use Node.js `v18.13.0` or `v16.17.1`. Other versions may also work but it has been tested and confirmed working with these two. 
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+Once published, the Node version will not matter when using the extension since VS code uses its own runtime instance (currently `v16.17.1`).
 
-## Requirements
+#### Install
+Clone repo
+```sh
+git clone https://github.com/rramjuttun/vscode-asset-converter.git
+```
+Install dependencies
+```sh
+cd vscode-asset-converter
+npm install
+```
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## Setup and Use
 
-## Extension Settings
+Once installed, press `F5` to start the extension development host or go to `Run > Start Debugging` in the menu bar. This will open up a new VS Code instance with the extension running in it. Open any folder within this instance to use as the workspace.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+Create a `.env` file in the workspace or add the following to your existing file if one already exists. A `.env-example` file is included in the extension directory. Include the following entries:
 
-For example:
+* `IPFS_API_ENDPOINT` is provided by the IPFS Node of choice (eg. Infura or localhost). The node must resolve to a running instance of the [IPFS Kubo RPC API v0](https://docs.ipfs.tech/reference/kubo/rpc/). Providers with custom APIs such as Pinata and NFT.Storage will not work.
+* `IPFS_API_KEY` and `IPFS_API_KEY_SECRET` are used if authentication is required (eg. Infura). If using a provider that does not require authentication (eg. localhost) then it is optional.
+* `ETH_NODE_URI` is the url of any ethereum node or gateway (eg. Alchemy).
+* `PRIVATE_KEY` is the deploying account's private key.
 
-This extension contributes the following settings:
+After setting up the `.env` file, the extension commands can be run by right clicking on a folder and then choosing the command from the context menu. Note that the commands will only appear when right clicking on folder, and not on files. The available commands are detailed in the next section. After a command has finished successfully, a `json` entry will be created in the `test.json` file in your directory. If the file does not exist, it will be created.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## Extension Commands 
 
-## Known Issues
+#### Upload to IPFS
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+This command uploads a folder and all of its subfolders to IPFS. The folder can contain any file types and can include other folders. This is used for uploading common resources that do not require ownership or association with an account such as background and menu images.  
 
-## Release Notes
+When the command is run successfully, an entry of the following format is created in `test.json` 
 
-Users appreciate release notes as you update your extension.
+```json
+{
+    "directory": "...",
+    "type": "common",
+    "hash": "bafybei...",
+    "uri": "/ipfs/bafybei..."
+ }
 
-### 1.0.0
+```
+* `"directory"` is the local directory from the workspace root to the folder that was uploaded
+* `"type": "common"` signifies that it was a common folder and a NFT collection was not created for it.
+* `"hash"` and is the content identifier for the uploaded folder. It can be used when fetching from IPFS via CLI.
+* `"uri"` is the hash prefixed with `/ipfs/`. It can be used when fetching from IPFS via gateways.
 
-Initial release of ...
+If the command is run on the same folder again, it will overwrite the old entry with the new one (using `"directory"` as the search key to find duplicates). 
 
-### 1.0.1
+#### Upload Folder and Deploy ERC721 Contract
 
-Fixed issue #.
+This command creates a ERC721 NFT collection from a folder. It uploads the folder to IPFS, generates and uploads `json` files for each image to IPFS, and deploys a smart contract. The folder can only contain `.png` images and can not contain any subfolders.
 
-### 1.1.0
+The smart contract is provided as a precompiled `.json` file containing the ABI and bytecode. The extension will place the smart contract file in the `artifacts` folder in the workspace. If the folder does not exist, it will create it. (Note that currently this functionality is hard coded to use the `artifacts/SimpleERC721.json` smart contract but I plan to add the ability for custom smart contracts).
 
-Added features X, Y, and Z.
+After the command is run successfully, an entry of the following format is created in `test.json`  
 
----
+```json
+{
+    "directory": "...",
+    "type": "ownable",
+    "baseUri": "ipfs://bafybei.../",
+    "deployAddress": "0x..."
+ }
+ ```
+ 
+* `"directory"` is the local directory from the workspace root to the folder that was uploaded
+* `"type": "ownable"` signifies that it was a ownable asset folder and a NFT collection was created for it.
+* `"baseURI"` is the base URI provided to the smart contract constructor. It is the IPFS URL of the parent folder of the `.json` files created for each image.  
+* `deployAddress` is the address of the deployed smart contract.
 
-## Working with Markdown
+If the command is run on the same folder again, it will overwrite the old entry with the new one (using `directory` as the search key to find duplicates). Note that previous old smart contract address will be lost and will need to be retreived from the blockchain if needed again.
+ 
+ 
 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
 
-## For more information
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-**Enjoy!**
+
+
+
+
+
+
+
