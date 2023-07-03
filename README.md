@@ -3,6 +3,8 @@
 This is a VS Code extension for uploading project resources to IPFS and creating NFT Collections from them. Its main purpose is to help onboard game developers to the Web3 stack by providing a way to transition assets from traditional centralized storage to a decentralized environment. 
 
 The project management page for this extension is [here](https://github.com/users/rramjuttun/projects/1).
+\
+The design document for the extension is here [here](https://github.com/rramjuttun/vscode-asset-converter/blob/main/docs/designdoc.md).
 ## Features
 * Upload common resource folders to IPFS 
 
@@ -32,7 +34,7 @@ Once installed, press `F5` to start the extension development host or go to `Run
 
 Create a `.env` file in the workspace or add the following to your existing file if one already exists. A `.env-example` file is included in the extension directory. Include the following entries:
 
-* `IPFS_API_ENDPOINT` is provided by the IPFS Node of choice (eg. Infura or localhost). The node must resolve to a running instance of the [IPFS Kubo RPC API v0](https://docs.ipfs.tech/reference/kubo/rpc/). Providers with custom APIs such as Pinata and NFT.Storage will not work.
+* `IPFS_API_ENDPOINT` is provided by the IPFS Node of choice (eg. Infura or localhost). The node must resolve to a running instance of the [IPFS Kubo RPC API v0](https://docs.ipfs.tech/reference/kubo/rpc/). Providers with their own custom APIs such as Pinata and NFT.Storage will not work.
 * `IPFS_API_KEY` and `IPFS_API_KEY_SECRET` are used if authentication is required (eg. Infura). If using a provider that does not require authentication (eg. localhost) then it is optional.
 * `ETH_NODE_URI` is the url of any ethereum node or gateway (eg. Alchemy).
 * `PRIVATE_KEY` is the deploying account's private key.
