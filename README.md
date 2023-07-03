@@ -2,7 +2,7 @@
 
 This is a VS Code extension for uploading project resources to IPFS and creating NFT Collections from them. Its main purpose is to help onboard game developers to the Web3 stack by providing a way to transition assets from traditional centralized storage to a decentralized environment. 
 
-
+The project management page for this extension is [here](https://github.com/users/rramjuttun/projects/1).
 ## Features
 * Upload common resource folders to IPFS 
 
@@ -11,7 +11,7 @@ This is a VS Code extension for uploading project resources to IPFS and creating
 ## Requirements and Installation
 
 #### Note on Requirements
-The extension currently only works in a development environment since it has not yet been published. When running as developer, use Node.js `v18.13.0` or `v16.17.1`. Other versions may also work but it has been tested and confirmed working with these two. 
+The extension currently only works in a development environment since it has not yet been published. When running as developer, use Node.js `v18.13.0` or `v16.17.1`. Other versions may also work but I have tested and confirmed it working with these two. 
 
 Once published, the Node version will not matter when using the extension since VS code uses its own runtime instance (currently `v16.17.1`).
 
@@ -67,7 +67,7 @@ If the command is run on the same folder again, it will overwrite the old entry 
 
 This command creates a ERC721 NFT collection from a folder. It uploads the folder to IPFS, generates and uploads `json` files for each image to IPFS, and deploys a smart contract. The folder can only contain `.png` images and can not contain any subfolders.
 
-The smart contract is provided as a precompiled `.json` file containing the ABI and bytecode. The extension will place the smart contract file in the `artifacts` folder in the workspace. If the folder does not exist, it will create it. (Note that currently this functionality is hard coded to use the `artifacts/SimpleERC721.json` smart contract but I plan to add the ability for custom smart contracts).
+The smart contract is provided as a precompiled `.json` file containing the ABI and bytecode. The extension will place the smart contract file in the `artifacts` folder in the workspace. If the folder does not exist, it will create it. (Note that currently this functionality is hard coded to use the `artifacts/SimpleERC721.json` smart contract).
 
 After the command is run successfully, an entry of the following format is created in `test.json`  
 
@@ -85,7 +85,7 @@ After the command is run successfully, an entry of the following format is creat
 * `"baseURI"` is the base URI provided to the smart contract constructor. It is the IPFS URL of the parent folder of the `.json` files created for each image.  
 * `deployAddress` is the address of the deployed smart contract.
 
-If the command is run on the same folder again, it will overwrite the old entry with the new one (using `directory` as the search key to find duplicates). Note that previous old smart contract address will be lost and will need to be retreived from the blockchain if needed again.
+If the command is run on the same folder again, it will overwrite the old entry with the new one (using `directory` as the search key to find duplicates). Note that previous smart contract address will be replaced and will need to be retreived from the blockchain if needed again.
  
  
 
