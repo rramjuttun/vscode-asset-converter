@@ -1,6 +1,6 @@
 # Development Process Summary
 
-This document summarizes my process and experience with developing the vscode-asset-converter extension. Mainly to be used as a reference for myself (and maybe others) in the future.  
+This document summarizes my process and experience with developing the vscode-asset-converter extension. Mainly to be used as a reference in the future.  
 
 All this information was obtained from the [VS Code API](https://code.visualstudio.com/api/references/vscode-api)
 
