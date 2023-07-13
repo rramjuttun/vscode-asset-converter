@@ -27,15 +27,15 @@ async function activate(context) {
 			// Upload to IPFS and save directory and hash to json
 			const upload = await uploadOnly(folderURI.path, ipfsInstance);
 			console.log(`Folder URI: ipfs://${upload.Hash}`);
-
+			const directory = path.relative(workspacePath, folderURI.path)
 			const jsonEntry = {
-				directory: path.relative(workspacePath, folderURI.path),
+				directory: directory,
 				type: "common",
 				hash: upload.Hash,
 				uri: `/ipfs/${upload.Hash}`,
 			}
 		
-			updateJson(path.join(workspacePath, "/test.json"), jsonEntry);
+			updateJson(path.join(workspacePath, "/test.json"), directory, jsonEntry);
 			return upload.Hash;
 		})
 	);
@@ -56,14 +56,15 @@ async function activate(context) {
 			console.log(`JSON base URI: ${baseURI}`);
 			console.log(`Contract deployed to address ${contractAddress}`)
 		
+			const directory = path.relative(workspacePath, folderURI.path)
 			const jsonEntry = {
-				directory: path.relative(workspacePath, folderURI.path),
+				directory: directory,
 				type: "ownable",
 				baseUri: baseURI,
 				deployAddress: contractAddress
 			}
 
-			updateJson(path.join(workspacePath, "/test.json"), jsonEntry)
+			updateJson(path.join(workspacePath, "/test.json"), directory, jsonEntry)
 		})
 	);
 
