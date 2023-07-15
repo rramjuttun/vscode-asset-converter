@@ -50,8 +50,13 @@ function checkInputFolderOnlyImages(folder) {
     }
 }
 
+function deleteFolder(folder) {
+    fs.rmSync(folder, { recursive: true })
+}
+
 module.exports = {
     processDotenv,
     checkArtifactDefault,
-    checkInputFolderOnlyImages
+    checkInputFolderOnlyImages,
+    deleteFolder
 }

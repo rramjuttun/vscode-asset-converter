@@ -32,8 +32,13 @@
           },
           "upload-extension.temporary.jsonLocation": {
             "type": "string",
-            "default": "./upload-extension-temp/json",
+            "default": "./upload-extension-temp",
             "description": "Location of folder to place the json files generated for each NFT. Path is relative to the currently opened workspace."
+          },
+          "upload-extension.temporary.deleteTemporaryJsonAfterDeploy": {
+            "type": "boolean",
+            "default": "True",
+            "description": "Deletes the json files generated for each NFT in the temp folder after they are uploaded to IPFS and the contract has been deployed."
           }
       }
     },

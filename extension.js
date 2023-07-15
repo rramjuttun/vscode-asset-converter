@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const { uploadOnly, uploadAndMint } = require('./ipfs-upload.js');
-const { processDotenv, checkArtifactDefault } = require('./helpers.js');
+const { processDotenv, checkArtifactDefault, deleteFolder } = require('./helpers.js');
 const path = require('path');
 const { updateJson } = require('./save-json.js')
 
@@ -35,7 +35,7 @@ async function activate(context) {
 			}
 			
 			// Check /.env file
-			({ ipfsInstance, _ } = processDotenv(envPath));
+			const { ipfsInstance, _ } = processDotenv(envPath);
 			if(!ipfsInstance.endpoint) {
 				throw new Error('.env does not contain member IPFS_API_ENDPOINT');
 			}
@@ -80,7 +80,7 @@ async function activate(context) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS and deploying smart contract.');
 
 			// Check /.env file
-			({ ipfsInstance, chainInstance } = processDotenv(envPath));
+			const { ipfsInstance, chainInstance } = processDotenv(envPath);
 			if(!ipfsInstance.endpoint) {
 				throw new Error('.env does not contain member IPFS_API_ENDPOINT');
 			}
@@ -103,14 +103,19 @@ async function activate(context) {
 				baseUri: baseURI,
 				deployAddress: contractAddress
 			}
-
+			
 			updateJson(outputJsonPath, directory, jsonEntry)
+
+			if(configs.deleteJson) {
+				deleteFolder(tempJsonPath);
+			}
 		})
 	);
 
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.testCommand', 
 		async function(folderURI) {
-			return;
+			const configs = loadConfig(true);
+			console.log(configs.deleteJson);
 		})
 	);
 }
@@ -146,12 +151,13 @@ function loadConfig(nft=false) {
 	
 	const artifact = configPaths.artifact.artifactFile;
 	const tempJsonLoc = configPaths.temporary.jsonLocation;
+	const deleteJson = configPaths.temporary.deleteTemporaryJsonAfterDeploy
 
 	if(!artifact.endsWith(".json")) {
 		throw new Error("'Artifact: Artifact File' does not resolve to .json file")
 	}
 
-	return( { env, json, artifact, tempJsonLoc });
+	return( { env, json, artifact, tempJsonLoc, deleteJson });
 }
 
 module.exports = {
