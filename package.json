@@ -12,6 +12,31 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
+    "configuration": {
+      "title": "IPFS Upload Extension",
+      "properties": {
+          "upload-extension.output.jsonFile": {
+              "type": "string",
+              "default": "./src/assets.json",
+              "description": "Target location for the output JSON File. Path is relative to the currently opened workspace."
+          },
+          "upload-extension.environment.envFile": {
+            "type": "string",
+            "default": "./.env",
+            "description": "Location of the .env file. Path is relative to the currently opened workspace."
+          },
+          "upload-extension.artifact.artifactFile": {
+            "type": "string",
+            "default": "./artifacts/SimpleERC721.sol/SimpleERC721.json",
+            "description": "Location of the precompiled smart contract code. Path is relative to the currently opened workspace."
+          },
+          "upload-extension.temporary.jsonLocation": {
+            "type": "string",
+            "default": "./upload-extension-temp/json",
+            "description": "Location of folder to place the json files generated for each NFT. Path is relative to the currently opened workspace."
+          }
+      }
+    },
     "commands": [
       {
         "command": "upload-extension.upload",
@@ -50,8 +75,8 @@
           "command": "upload-extension.uploadAndMint",
           "when": "false"
         } 
-    ]
-  }
+      ]
+    }
   },
   "scripts": {
     "lint": "eslint .",

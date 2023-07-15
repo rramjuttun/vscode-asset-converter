@@ -11,27 +11,36 @@ async function activate(context) {
 	console.log('Congratulations, your extension "upload-extension" is now active!');
 
 	// Check that workspace is open
-	const workspacePath = checkWorkspace();
+	//let workspacePath = checkWorkspace();
 	
 	// Look for .env file in workspace
-	let { ipfsInstance, chainInstance } = processDotenv(workspacePath);
-	if(!ipfsInstance.endpoint) {
-		throw new Error('.env not found');
-	}
+	// let { ipfsInstance, chainInstance } = processDotenv(envPath);
+	// if(!ipfsInstance.endpoint) {
+	// 	throw new Error('.env not found');
+	// }
 
 	// Function to upload folder to IPFS. Can contain any file types and other folders too
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.upload', 
 		async function (folderURI) {
+			const workspacePath = checkWorkspace();
+			const configs = loadConfig();
+
+			const envPath = path.join(workspacePath, configs.env);
+			const outputJsonPath = path.join(workspacePath, configs.json);
 			const directory = path.relative(workspacePath, folderURI.path);
+
 			const confirmation = await vscode.window.showInformationMessage(`Upload folder ./${directory} to IPFS?`, "Confirm", "Cancel");
 			if(confirmation !== "Confirm") {
 				return;
 			}
-
-			vscode.window.showInformationMessage('Uploading folder to IPFS.');
 			
 			// Check /.env file
-			({ ipfsInstance, chainInstance } = processDotenv(workspacePath));
+			({ ipfsInstance, _ } = processDotenv(envPath));
+			if(!ipfsInstance.endpoint) {
+				throw new Error('.env does not contain member IPFS_API_ENDPOINT');
+			}
+
+			vscode.window.showInformationMessage('Uploading folder to IPFS.');
 
 			// Upload to IPFS and save directory and hash to json
 			const upload = await uploadOnly(folderURI.path, ipfsInstance);
@@ -44,7 +53,8 @@ async function activate(context) {
 				uri: `/ipfs/${upload.Hash}`,
 			}
 		
-			updateJson(path.join(workspacePath, "/test.json"), directory, jsonEntry);
+			//console.log(outputJsonPath);
+			updateJson(outputJsonPath, directory, jsonEntry);
 			return upload.Hash;
 		})
 	);
@@ -53,6 +63,13 @@ async function activate(context) {
 	// Folder can only contain png images and can not contain other folders
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.uploadAndMint', 
 		async function(folderURI) {
+			const workspacePath = checkWorkspace();
+			const configs = loadConfig(true);
+
+			const envPath = path.join(workspacePath, configs.env);
+			const outputJsonPath = path.join(workspacePath, configs.json);
+			const artifactPath = path.join(workspacePath, configs.artifact);
+			const tempJsonPath = path.join(workspacePath, configs.tempJsonLoc);
 			const directory = path.relative(workspacePath, folderURI.path);
 
 			const confirmation = await vscode.window.showInformationMessage(`Upload folder ./${directory} to IPFS and Deploy ERC721 Smart Contract?`, "Confirm", "Cancel");
@@ -63,16 +80,20 @@ async function activate(context) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS and deploying smart contract.');
 
 			// Check /.env file
-			({ ipfsInstance, chainInstance } = processDotenv(workspacePath));
+			({ ipfsInstance, chainInstance } = processDotenv(envPath));
+			if(!ipfsInstance.endpoint) {
+				throw new Error('.env does not contain member IPFS_API_ENDPOINT');
+			}
+			if(!chainInstance.nodeURI || !chainInstance.privateKey) {
+				throw new Error('.env does not contain member ETH_NODE_URI or PRIVATE_KEY');
+			}
 
 			// Check if artifacts folder exists, otherwise copy it from extension 
-			checkArtifactDefault(context.extensionPath, workspacePath);
+			checkArtifactDefault(context.extensionPath, artifactPath);
 
 			// Upload and deploy contract
 			const folderPath = folderURI.path
-			const jsonPath = path.join(workspacePath, './json', path.basename(folderPath));
-			const artifactPath = path.join(workspacePath, '/artifacts/SimpleERC721.json')
-			const { baseURI, contractAddress } = await uploadAndMint(folderPath, jsonPath, artifactPath, ipfsInstance, chainInstance);
+			const { baseURI, contractAddress } = await uploadAndMint(folderPath, tempJsonPath, artifactPath, ipfsInstance, chainInstance);
 			console.log(`JSON base URI: ${baseURI}`);
 			console.log(`Contract deployed to address ${contractAddress}`)
 		
@@ -83,7 +104,7 @@ async function activate(context) {
 				deployAddress: contractAddress
 			}
 
-			updateJson(path.join(workspacePath, "/test.json"), directory, jsonEntry)
+			updateJson(outputJsonPath, directory, jsonEntry)
 		})
 	);
 
@@ -105,6 +126,32 @@ function checkWorkspace() {
 		throw new Error('Only one workspace can be open');
 	}
 	return(workspaceFolders[0].uri.fsPath);
+}
+
+function loadConfig(nft=false) {
+	const configPaths = vscode.workspace.getConfiguration('upload-extension');
+	const env = configPaths.environment.envFile;
+	const json = configPaths.output.jsonFile
+
+	if(!env.endsWith(".env")) {
+		throw new Error("'Environment: Env File' does not resolve to .env file");
+	}
+	if(!json.endsWith(".json")) {
+		throw new Error("'Output: Json File' does not resolve to .json file");
+	}
+	
+	if(!nft) {
+		return({ env, json })
+	}
+	
+	const artifact = configPaths.artifact.artifactFile;
+	const tempJsonLoc = configPaths.temporary.jsonLocation;
+
+	if(!artifact.endsWith(".json")) {
+		throw new Error("'Artifact: Artifact File' does not resolve to .json file")
+	}
+
+	return( { env, json, artifact, tempJsonLoc });
 }
 
 module.exports = {

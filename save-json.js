@@ -1,6 +1,6 @@
 const fs = require('fs');
+const path = require('path');
 
-// Function to read the data from the JSON file
 function readJson(jsonPath) {
     if(fs.existsSync(jsonPath)) {
         const jsonData = fs.readFileSync(jsonPath);
@@ -11,8 +11,13 @@ function readJson(jsonPath) {
 }
 
 function writeJson(jsonPath, data) {
+    const directoryPath = path.dirname(jsonPath);
+    if (!fs.existsSync(directoryPath)) {
+        console.log("Output json directory does not already exist. Will create it.")
+        fs.mkdirSync(directoryPath, { recursive: true });
+    }
     fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), );
-  }
+}
 
 function updateJson(jsonPath, key, newEntry) {
     const existingJson = readJson(jsonPath);

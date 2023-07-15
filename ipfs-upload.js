@@ -93,7 +93,7 @@ async function uploadAndMint(folderPath, jsonPath, artifactPath, ipfsInstance, c
         const contractAddress = await deployContract(chainInstance, artifactPath, constructorArgs);
         return({ baseURI, contractAddress });
     } catch(error) {
-        console.error(error.message)
+        console.error(error)
         process.exitCode = 1;
     }
 }
@@ -103,7 +103,7 @@ async function uploadOnly(folderPath, ipfsInstance) {
         const uri = await _uploadFolder(folderPath, ipfsInstance);
         return uri;
     } catch(error) {
-        console.error(error.message);;
+        console.error(error);;
         process.exitCode = 1;
     }
 }
