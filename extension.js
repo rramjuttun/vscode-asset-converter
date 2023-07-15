@@ -22,15 +22,21 @@ async function activate(context) {
 	// Function to upload folder to IPFS. Can contain any file types and other folders too
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.upload', 
 		async function (folderURI) {
-			vscode.window.showInformationMessage('Uploading folder to IPFS.');
+			const directory = path.relative(workspacePath, folderURI.path);
+			const confirmation = await vscode.window.showInformationMessage(`Upload folder ./${directory} to IPFS?`, "Confirm", "Cancel");
+			if(confirmation !== "Confirm") {
+				return;
+			}
 
+			vscode.window.showInformationMessage('Uploading folder to IPFS.');
+			
 			// Check /.env file
 			({ ipfsInstance, chainInstance } = processDotenv(workspacePath));
 
 			// Upload to IPFS and save directory and hash to json
 			const upload = await uploadOnly(folderURI.path, ipfsInstance);
 			console.log(`Folder URI: ipfs://${upload.Hash}`);
-			const directory = path.relative(workspacePath, folderURI.path)
+		
 			const jsonEntry = {
 				directory: directory,
 				type: "common",
@@ -47,6 +53,13 @@ async function activate(context) {
 	// Folder can only contain png images and can not contain other folders
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.uploadAndMint', 
 		async function(folderURI) {
+			const directory = path.relative(workspacePath, folderURI.path);
+
+			const confirmation = await vscode.window.showInformationMessage(`Upload folder ./${directory} to IPFS and Deploy ERC721 Smart Contract?`, "Confirm", "Cancel");
+			if(confirmation !== "Confirm") {
+				return;
+			}
+
 			vscode.window.showInformationMessage('Uploading folder to IPFS and deploying smart contract.');
 
 			// Check /.env file
@@ -63,7 +76,6 @@ async function activate(context) {
 			console.log(`JSON base URI: ${baseURI}`);
 			console.log(`Contract deployed to address ${contractAddress}`)
 		
-			const directory = path.relative(workspacePath, folderURI.path)
 			const jsonEntry = {
 				directory: directory,
 				type: "ownable",
@@ -76,9 +88,8 @@ async function activate(context) {
 	);
 
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.testCommand', 
-		function(folderURI) {
-			console.log(folderURI);
-			console.log(process.versions)
+		async function(folderURI) {
+			return;
 		})
 	);
 }
