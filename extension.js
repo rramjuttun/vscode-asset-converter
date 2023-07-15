@@ -24,6 +24,9 @@ async function activate(context) {
 		async function (folderURI) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS.');
 
+			// Check /.env file
+			({ ipfsInstance, chainInstance } = processDotenv(workspacePath));
+
 			// Upload to IPFS and save directory and hash to json
 			const upload = await uploadOnly(folderURI.path, ipfsInstance);
 			console.log(`Folder URI: ipfs://${upload.Hash}`);
@@ -46,9 +49,13 @@ async function activate(context) {
 		async function(folderURI) {
 			vscode.window.showInformationMessage('Uploading folder to IPFS and deploying smart contract.');
 
+			// Check /.env file
+			({ ipfsInstance, chainInstance } = processDotenv(workspacePath));
+
 			// Check if artifacts folder exists, otherwise copy it from extension 
 			checkArtifactDefault(context.extensionPath, workspacePath);
 
+			// Upload and deploy contract
 			const folderPath = folderURI.path
 			const jsonPath = path.join(workspacePath, './json', path.basename(folderPath));
 			const artifactPath = path.join(workspacePath, '/artifacts/SimpleERC721.json')
