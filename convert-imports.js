@@ -28,7 +28,6 @@ function convertImports(text, editorFile, jsonPath) {
         
         const relativePath = vscode.workspace.asRelativePath(path.join(path.dirname(editorFile), filePath));
         const folder = path.dirname(relativePath);
-        console.log(folder)
 
         // Check if the folder exists in the assets json file
         if(folder in assetsJson) {
@@ -45,7 +44,7 @@ function convertImports(text, editorFile, jsonPath) {
     const gateway = "gateway"
     const jsonName = "assets"
     for (const [folder, files] of Object.entries(imports)) {
-        gatewayFetch += `const ${normalizeString(folder)} = ${gateway}.urlFromJsonEntry(${jsonName}, ${folder})\n`;
+        gatewayFetch += `const ${normalizeString(folder)} = ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")\n`;
         for(const file of files){
             text = text.replace(file.codeLine, `let ${file.importName} = ${normalizeString(folder)}+'/${file.file}'`)
         }

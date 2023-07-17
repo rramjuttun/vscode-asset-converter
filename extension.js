@@ -134,15 +134,14 @@ async function activate(context) {
 				let text = editor.document.getText();
 
 				const newText = convertImports(text, editorFile, path.join(workspacePath, jsonFile));
-				console.log(newText);
-				// const start = editor.document.lineAt(0);
-				// const end = editor.document.lineAt(editor.document.lineCount - 1);
-				// const textRange = new vscode.Range(start.range.start, end.range.end);
+				
+				const start = editor.document.lineAt(0);
+				const end = editor.document.lineAt(editor.document.lineCount - 1);
+				const textRange = new vscode.Range(start.range.start, end.range.end);
 
-				// console.log(gatewayFetch)
-				// editor.edit(editBuilder => {
-				// 	editBuilder.replace(textRange, text);
-				// })
+				editor.edit(editBuilder => {
+					editBuilder.replace(textRange, newText);
+				})
 			}
 		})
 	);
