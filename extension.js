@@ -120,7 +120,7 @@ async function activate(context) {
 	);
 
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.convertImports', 
-		function() {
+		async function() {
 			const workspacePath = checkWorkspace();
 			const jsonFile = vscode.workspace.getConfiguration('upload-extension').output.jsonFile;
 			if(!jsonFile.endsWith(".json")) {
@@ -130,10 +130,21 @@ async function activate(context) {
 			const editor = vscode.window.activeTextEditor;
 			const editorFile = editor.document.fileName
 
+			const gatewayName = await vscode.window.showInputBox({
+				prompt: "Enter the name of the Gateway object",
+				value: "gateway",
+			})
+			
+			if(!gatewayName) {
+				return;
+			}
+			if(!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(gatewayName)) {
+				throw new Error("Invalid gateway name provided.")
+			}
+
 			if(editor) {
 				let text = editor.document.getText();
-
-				const newText = convertImports(text, editorFile, path.join(workspacePath, jsonFile));
+				const newText = convertImports(text, editorFile, path.join(workspacePath, jsonFile), gatewayName);
 				
 				const start = editor.document.lineAt(0);
 				const end = editor.document.lineAt(editor.document.lineCount - 1);
@@ -143,6 +154,7 @@ async function activate(context) {
 					editBuilder.replace(textRange, newText);
 				})
 			}
+			return;
 		})
 	);
 }

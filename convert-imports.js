@@ -2,12 +2,12 @@ const fs = require('fs');
 const vscode = require('vscode');
 const path = require('path')
 
-function convertImports(text, editorFile, jsonPath) {
+function convertImports(text, editorFile, jsonPath, gateway) {
     const data = fs.readFileSync(jsonPath);
     const assetsJson = JSON.parse(data);
 
-    // regex - import xyz from 'x/y/z.png
-    const regex = /^(?!\/\/\s*)import\s+(\w+)\s+from\s+'([^']+\.(png))'/gm;
+    // regex: import xyz from 'x/y/z.png
+    const regex = /^(?!\/\/\s*)import\s+(\w+)\s+from\s+['"]([^'"]+\.(png))['"]/gm;
 
     /* Change import from relative to current file to relative to workspace
        example: if file being modified is 'src/game/a.js' and it contains
@@ -40,16 +40,46 @@ function convertImports(text, editorFile, jsonPath) {
         }
     }
 
-    let gatewayFetch = ""
-    const gateway = "gateway"
-    const jsonName = "assets"
+    let newCode = ""
+    let jsonName;
+    const inputJsonName = false;
+    if(!inputJsonName) {
+        // Path of assets json relative to the editor file
+        const jsonImportPath = path.relative(path.dirname(editorFile), jsonPath);
+
+        // Check if the json file is already imported, if it is use it as jsonName, otherwise import it using the file name as the jsonName
+        const re = new RegExp(`^(?!\/\/\\s*)import\\s+(\\w+)\\s+from\\s+['"]${jsonImportPath.replace(/\//g, '\\/')}['"]`);
+        const match = re.exec(text);
+        if(match) {
+            jsonName = match[1];
+        } else {
+            jsonName = normalizeString(path.basename(jsonPath, '.json'));
+            newCode += `import ${jsonName} from '${jsonImportPath}'\n`
+        }
+    } else {
+        //TODO
+        jsonName = 'assets';
+    }
+
     for (const [folder, files] of Object.entries(imports)) {
-        gatewayFetch += `const ${normalizeString(folder)} = ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")\n`;
-        for(const file of files){
-            text = text.replace(file.codeLine, `let ${file.importName} = ${normalizeString(folder)}+'/${file.file}'`)
+        switch(assetsJson[folder].type) {
+            case "common":
+                newCode += `const ${normalizeString(folder)} = await ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")\n`;
+                for(const file of files){
+                    newCode += `let ${file.importName} = ${normalizeString(folder)}+'/${file.file}'`
+                    text = text.replace(file.codeLine, newCode);
+                    newCode = "";
+                }
+                break;
+            case "ownable":
+                newCode += `let ${files[0].importName} = await ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")`;
+                text = text.replace(files[0].codeLine, newCode);
+                newCode = "";
+                break;
+            default:
+                break;      
         }
     }
-    console.log(gatewayFetch);
     return text;
 }
 
