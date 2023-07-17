@@ -2,8 +2,8 @@ const vscode = require('vscode');
 const { uploadOnly, uploadAndMint } = require('./ipfs-upload.js');
 const { processDotenv, checkArtifactDefault, deleteFolder } = require('./helpers.js');
 const path = require('path');
-const { updateJson } = require('./save-json.js')
-
+const { updateJson } = require('./save-json.js');
+const { convertImports } = require('./convert-imports.js');
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -116,6 +116,34 @@ async function activate(context) {
 		async function(folderURI) {
 			const configs = loadConfig(true);
 			console.log(configs.deleteJson);
+		})
+	);
+
+	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.convertImports', 
+		function() {
+			const workspacePath = checkWorkspace();
+			const jsonFile = vscode.workspace.getConfiguration('upload-extension').output.jsonFile;
+			if(!jsonFile.endsWith(".json")) {
+				throw new Error("'Output: Json File' does not resolve to .json file");
+			}
+
+			const editor = vscode.window.activeTextEditor;
+			const editorFile = editor.document.fileName
+
+			if(editor) {
+				let text = editor.document.getText();
+
+				const newText = convertImports(text, editorFile, path.join(workspacePath, jsonFile));
+				console.log(newText);
+				// const start = editor.document.lineAt(0);
+				// const end = editor.document.lineAt(editor.document.lineCount - 1);
+				// const textRange = new vscode.Range(start.range.start, end.range.end);
+
+				// console.log(gatewayFetch)
+				// editor.edit(editBuilder => {
+				// 	editBuilder.replace(textRange, text);
+				// })
+			}
 		})
 	);
 }

@@ -54,6 +54,10 @@
       {
         "command": "upload-extension.testCommand",
         "title": "Developer Test Commnd"
+      },
+      {
+        "command": "upload-extension.convertImports",
+        "title": "Convert .png Imports"
       }
     ],
     "menus": {
