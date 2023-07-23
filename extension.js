@@ -154,6 +154,7 @@ async function activate(context) {
 					editBuilder.replace(textRange, newText);
 				})
 			}
+			
 			return;
 		})
 	);

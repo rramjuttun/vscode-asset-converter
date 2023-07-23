@@ -63,14 +63,15 @@ function convertImports(text, editorFile, jsonPath, gateway) {
 
     for (const [folder, files] of Object.entries(imports)) {
         switch(assetsJson[folder].type) {
-            case "common":
-                newCode += `const ${normalizeString(folder)} = await ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")\n`;
-                for(const file of files){
-                    newCode += `let ${file.importName} = ${normalizeString(folder)}+'/${file.file}'`
-                    text = text.replace(file.codeLine, newCode);
-                    newCode = "";
-                }
-                break;
+            // Common assets can be handled directly in IPFS
+            // case "common":
+            //     newCode += `const ${normalizeString(folder)} = await ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")\n`;
+            //     for(const file of files){
+            //         newCode += `let ${file.importName} = ${normalizeString(folder)}+'/${file.file}'`
+            //         text = text.replace(file.codeLine, newCode);
+            //         newCode = "";
+            //     }
+            //     break;
             case "ownable":
                 newCode += `let ${files[0].importName} = await ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")`;
                 text = text.replace(files[0].codeLine, newCode);
