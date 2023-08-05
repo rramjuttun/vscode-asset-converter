@@ -10,15 +10,6 @@ const { convertImports } = require('./convert-imports.js');
 async function activate(context) {
 	console.log('Congratulations, your extension "upload-extension" is now active!');
 
-	// Check that workspace is open
-	//let workspacePath = checkWorkspace();
-	
-	// Look for .env file in workspace
-	// let { ipfsInstance, chainInstance } = processDotenv(envPath);
-	// if(!ipfsInstance.endpoint) {
-	// 	throw new Error('.env not found');
-	// }
-
 	// Function to upload folder to IPFS. Can contain any file types and other folders too
 	context.subscriptions.push(vscode.commands.registerCommand('upload-extension.upload', 
 		async function (folderURI) {
@@ -26,10 +17,9 @@ async function activate(context) {
 			const configs = loadConfig();
 
 			const envPath = path.join(workspacePath, configs.env);
-			const outputJsonPath = path.join(workspacePath, configs.json);
 			const directory = path.relative(workspacePath, folderURI.path);
 
-			const confirmation = await vscode.window.showInformationMessage(`Upload folder ./${directory} to IPFS?`, "Confirm", "Cancel");
+			const confirmation = await vscode.window.showInformationMessage(`Upload folder /${directory} to IPFS?`, "Confirm", "Cancel");
 			if(confirmation !== "Confirm") {
 				return;
 			}
@@ -40,21 +30,15 @@ async function activate(context) {
 				throw new Error('.env does not contain member IPFS_API_ENDPOINT');
 			}
 
-			vscode.window.showInformationMessage('Uploading folder to IPFS.');
-
 			// Upload to IPFS and save directory and hash to json
 			const upload = await uploadOnly(folderURI.path, ipfsInstance);
 			console.log(`Folder URI: ipfs://${upload.Hash}`);
 		
-			const jsonEntry = {
-				directory: directory,
-				type: "common",
-				hash: upload.Hash,
-				uri: `/ipfs/${upload.Hash}`,
+			const message = `Folder hash: ${upload.Hash}`;
+			const copyAction = await vscode.window.showInformationMessage(message, 'Copy and Close', 'Close');
+			if(copyAction == 'Copy and Close') {
+				await vscode.env.clipboard.writeText(upload.Hash);
 			}
-		
-			//console.log(outputJsonPath);
-			updateJson(outputJsonPath, directory, jsonEntry);
 			return upload.Hash;
 		})
 	);
@@ -72,7 +56,7 @@ async function activate(context) {
 			const tempJsonPath = path.join(workspacePath, configs.tempJsonLoc);
 			const directory = path.relative(workspacePath, folderURI.path);
 
-			const confirmation = await vscode.window.showInformationMessage(`Upload folder ./${directory} to IPFS and Deploy ERC721 Smart Contract?`, "Confirm", "Cancel");
+			const confirmation = await vscode.window.showInformationMessage(`Upload folder /${directory} to IPFS and Deploy ERC721 Smart Contract?`, "Confirm", "Cancel");
 			if(confirmation !== "Confirm") {
 				return;
 			}
@@ -98,8 +82,6 @@ async function activate(context) {
 			console.log(`Contract deployed to address ${contractAddress}`)
 		
 			const jsonEntry = {
-				directory: directory,
-				type: "ownable",
 				baseUri: baseURI,
 				deployAddress: contractAddress
 			}

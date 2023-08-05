@@ -10,14 +10,14 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./extension.js",
+  "main": "./src/extension.js",
   "contributes": {
     "configuration": {
       "title": "IPFS Upload Extension",
       "properties": {
           "upload-extension.output.jsonFile": {
               "type": "string",
-              "default": "./src/assets.json",
+              "default": "./src/collections.json",
               "description": "Target location for the output JSON File. Path is relative to the currently opened workspace."
           },
           "upload-extension.environment.envFile": {
