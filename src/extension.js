@@ -1,9 +1,9 @@
 const vscode = require('vscode');
-const { uploadOnly, uploadAndMint } = require('./ipfs-upload.js');
-const { processDotenv, checkArtifactDefault, deleteFolder } = require('./helpers.js');
+const { uploadOnly, uploadAndMint } = require('./upload/ipfs-upload.js');
+const { processDotenv, checkArtifactDefault, deleteFolder } = require('./upload/helpers.js');
 const path = require('path');
-const { updateJson } = require('./save-json.js');
-const { convertImports } = require('./convert-imports.js');
+const { updateJson } = require('./upload/save-json.js/index.js');
+const { convertImports } = require('./convert/convert-imports.js');
 /**
  * @param {vscode.ExtensionContext} context
  */

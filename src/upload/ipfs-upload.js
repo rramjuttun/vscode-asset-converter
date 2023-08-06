@@ -2,7 +2,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
-const { deployContract } = require('./deploy.js');
+const { deployContract } = require('../deploy/deploy.js');
 const { checkInputFolderOnlyImages } = require('./helpers.js')
 
 async function _uploadFolder(folderPath, ipfsInstance, returnAll=false) {
