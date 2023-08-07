@@ -80,32 +80,31 @@ function _createJSONFromIPFS(jsonDirectory, assets) {
     }
 }
 
-async function uploadAndMint(folderPath, jsonPath, artifactPath, ipfsInstance, chainInstance) {
-    try {
-        const numImages = checkInputFolderOnlyImages(folderPath);
-        const uploadedAssets = await _uploadFolder(folderPath, ipfsInstance, true);
+async function uploadAndMint(extensionURI, folderPath, jsonPath, artifactPath, ipfsInstance, chainInstance) {
+    const numImages = checkInputFolderOnlyImages(folderPath);
+    const uploadedAssets = await _uploadFolder(folderPath, ipfsInstance, true);
 
-        _createJSONFromIPFS(jsonPath, uploadedAssets);
-        const uploadedJSON = await _uploadFolder(jsonPath, ipfsInstance);
-        const baseURI = 'ipfs://' + uploadedJSON.Hash+ '/';
+    _createJSONFromIPFS(jsonPath, uploadedAssets);
+    const uploadedJSON = await _uploadFolder(jsonPath, ipfsInstance);
+    const baseURI = 'ipfs://' + uploadedJSON.Hash+ '/';
 
-        const constructorArgs = ["Collection 10", "AMG", baseURI, numImages];
-        const contractAddress = await deployContract(chainInstance, artifactPath, constructorArgs);
-        return({ baseURI, contractAddress });
-    } catch(error) {
-        console.error(error)
-        process.exitCode = 1;
+    const overrides = {
+        regex: {
+            "baseuri": "$BASEURI",
+            "max": "$MAXSUPPLY"
+        },
+        mappings: {
+            "$BASEURI": baseURI,
+            "$MAXSUPPLY": numImages
+        }
     }
+    const contractAddress = await deployContract(extensionURI, chainInstance, artifactPath, overrides);
+    return({ baseURI, contractAddress });  
 }
 
 async function uploadOnly(folderPath, ipfsInstance) {
-    try {
         const uri = await _uploadFolder(folderPath, ipfsInstance);
         return uri;
-    } catch(error) {
-        console.error(error);;
-        process.exitCode = 1;
-    }
 }
 
 module.exports = {

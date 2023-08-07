@@ -1,7 +1,9 @@
 const fs = require('fs');
 const { Web3 } = require('web3');
+const { getConstructorArgs } = require("./webview/runWebview.js")
 
-async function deployContract(ethInstance, artifactPath, constructorArgs) {
+
+async function deployContract(extensionUri, ethInstance, artifactPath, overrides={}) {
     const json = JSON.parse(fs.readFileSync(artifactPath));
     const abi = json.abi;
     if(!Array.isArray(abi)) {
@@ -21,6 +23,19 @@ async function deployContract(ethInstance, artifactPath, constructorArgs) {
         bytecode = bytecode.slice(2);
     }
 
+    const constructorABI = abi.find((abi) => abi.type === "constructor")
+    let constructorArgs = [];
+
+    if(constructorABI) {
+        constructorArgs =  await(getConstructorArgs(constructorABI.inputs, extensionUri, overrides));
+        if(overrides) {
+            constructorArgs.forEach((element, index, array) => {
+                if(element in overrides.mappings) {
+                    array[index] = overrides.mappings[element];
+                }
+            });
+        }
+    }
     const web3 = new Web3(ethInstance.nodeURI);
 
     let privateKey = ethInstance.privateKey;
