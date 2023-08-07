@@ -5,7 +5,8 @@ const path = require('path');
 const { updateJson } = require('./upload/save-json.js');
 const { convertImports } = require('./convert/convert-imports.js');
 const { ConstructorPanel } = require('./deploy/webview/ConstructorPanel.js')
-const { deployContract } = require('./deploy/deploy.js')
+const { deployContract } = require('./deploy/deploy.js');
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -87,15 +88,18 @@ async function activate(context) {
 				const { baseURI, contractAddress } = await uploadAndMint(context.extensionUri, folderPath, tempJsonPath, artifactPath, ipfsInstance, chainInstance);
 				
 				console.log(`JSON base URI: ${baseURI}`);
-				console.log(`Contract deployed to address ${contractAddress}`)
+
+				if(contractAddress) {
+					console.log(`Contract deployed to address ${contractAddress}`)
 			
-				const jsonEntry = {
-					baseUri: baseURI,
-					deployAddress: contractAddress
+					const jsonEntry = {
+						baseUri: baseURI,
+						deployAddress: contractAddress
+					}
+				
+					updateJson(outputJsonPath, directory, jsonEntry)
 				}
 				
-				updateJson(outputJsonPath, directory, jsonEntry)
-
 				if(configs.deleteJson) {
 					deleteFolder(tempJsonPath);
 				}

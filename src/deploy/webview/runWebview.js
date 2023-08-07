@@ -28,9 +28,10 @@ async function getConstructorArgs(constructorABI, extensionUri, overrides={}) {
             }
         });
         panelObject._panel.onDidDispose(() => {
-            reject(null);
+            resolve(null);
         });
     });
+
 
     const constructorArgs = await(constructorArgsPromise);
     return(constructorArgs);

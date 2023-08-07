@@ -28,6 +28,11 @@ async function deployContract(extensionUri, ethInstance, artifactPath, overrides
 
     if(constructorABI) {
         constructorArgs =  await(getConstructorArgs(constructorABI.inputs, extensionUri, overrides));
+
+        if(constructorArgs === null) {
+            return(null);
+        }
+
         if(overrides) {
             constructorArgs.forEach((element, index, array) => {
                 if(element in overrides.mappings) {
