@@ -2,7 +2,6 @@ const fs = require('fs');
 const { Web3 } = require('web3');
 const { getConstructorArgs } = require("./webview/runWebview.js")
 
-
 async function deployContract(extensionUri, ethInstance, artifactPath, overrides={}) {
     const json = JSON.parse(fs.readFileSync(artifactPath));
     const abi = json.abi;

@@ -140,7 +140,7 @@ class ConstructorPanel {
                 </script>
             </head>
             <body>
-                <h1>Hello World</h1>
+                <h1>Constructor Parameters</h1>
                 <form id="constructorForm">
                     ${formElements}
                     <button type="submit" id="submitButton">Submit</button>

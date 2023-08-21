@@ -90,11 +90,12 @@ async function activate(context) {
 				console.log(`JSON base URI: ${baseURI}`);
 
 				if(contractAddress) {
-					console.log(`Contract deployed to address ${contractAddress}`)
+					vscode.window.showInformationMessage(`Contract deployed to address ${contractAddress}`)
 			
 					const jsonEntry = {
 						baseUri: baseURI,
-						deployAddress: contractAddress
+						deployAddress: contractAddress,
+						type: "ownable"
 					}
 				
 					updateJson(outputJsonPath, directory, jsonEntry)

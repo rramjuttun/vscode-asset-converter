@@ -13,32 +13,37 @@
   "main": "./src/extension.js",
   "contributes": {
     "configuration": {
-      "title": "IPFS Upload Extension",
+      "title": "IPFS Helper",
       "properties": {
           "upload-extension.output.jsonFile": {
               "type": "string",
               "default": "./src/collections.json",
-              "description": "Target location for the output JSON File. Path is relative to the currently opened workspace."
+              "description": "Target location for the output JSON File. Path is relative to the currently opened workspace.",
+              "order": 5
           },
           "upload-extension.environment.envFile": {
             "type": "string",
             "default": "./.env",
-            "description": "Location of the .env file. Path is relative to the currently opened workspace."
+            "description": "Location of the .env file. Path is relative to the currently opened workspace.",
+            "order": 1
           },
           "upload-extension.artifact.artifactFile": {
             "type": "string",
             "default": "./artifacts/SimpleERC721.sol/SimpleERC721.json",
-            "description": "Location of the precompiled smart contract code. Path is relative to the currently opened workspace."
+            "description": "Location of the precompiled smart contract code. Path is relative to the currently opened workspace.",
+            "order": 2
           },
           "upload-extension.temporary.jsonLocation": {
             "type": "string",
             "default": "./upload-extension-temp",
-            "description": "Location of folder to place the json files generated for each NFT. Path is relative to the currently opened workspace."
+            "description": "Location of folder to place the json files generated for each NFT. Path is relative to the currently opened workspace.",
+            "order": 3
           },
           "upload-extension.temporary.deleteTemporaryJsonAfterDeploy": {
             "type": "boolean",
             "default": "True",
-            "description": "Deletes the json files generated for each NFT in the temp folder after they are uploaded to IPFS and the contract has been deployed."
+            "description": "Deletes the json files generated for each NFT in the temp folder after they are uploaded to IPFS and the contract has been deployed.",
+            "order": 4
           }
       }
     },
@@ -64,11 +69,13 @@
       "explorer/context": [
         {
           "command": "upload-extension.upload",
-          "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+          "when": "resourceScheme == 'file' && explorerResourceIsFolder",
+          "group": "uploadExtension@1"
         },
         {
           "command": "upload-extension.uploadAndMint",
-          "when": "resourceScheme == 'file' && explorerResourceIsFolder"
+          "when": "resourceScheme == 'file' && explorerResourceIsFolder",
+          "group": "uploadExtension@2"
         }
       ],
       "commandPalette": [
