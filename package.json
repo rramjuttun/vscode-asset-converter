@@ -1,6 +1,8 @@
 {
   "name": "upload-extension",
   "displayName": "upload-extension",
+  "publisher": "rrmjtn",
+  "license": "MIT",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -10,41 +12,46 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./src/extension.js",
+  "main": "./out/extension.js",
+  "homepage": "https://github.com/rramjuttun/vscode-asset-converter#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rramjuttun/vscode-asset-converter.git"
+  },
   "contributes": {
     "configuration": {
       "title": "IPFS Helper",
       "properties": {
-          "upload-extension.output.jsonFile": {
-              "type": "string",
-              "default": "./src/collections.json",
-              "description": "Target location for the output JSON File. Path is relative to the currently opened workspace.",
-              "order": 5
-          },
-          "upload-extension.environment.envFile": {
-            "type": "string",
-            "default": "./.env",
-            "description": "Location of the .env file. Path is relative to the currently opened workspace.",
-            "order": 1
-          },
-          "upload-extension.artifact.artifactFile": {
-            "type": "string",
-            "default": "./artifacts/SimpleERC721.sol/SimpleERC721.json",
-            "description": "Location of the precompiled smart contract code. Path is relative to the currently opened workspace.",
-            "order": 2
-          },
-          "upload-extension.temporary.jsonLocation": {
-            "type": "string",
-            "default": "./upload-extension-temp",
-            "description": "Location of folder to place the json files generated for each NFT. Path is relative to the currently opened workspace.",
-            "order": 3
-          },
-          "upload-extension.temporary.deleteTemporaryJsonAfterDeploy": {
-            "type": "boolean",
-            "default": "True",
-            "description": "Deletes the json files generated for each NFT in the temp folder after they are uploaded to IPFS and the contract has been deployed.",
-            "order": 4
-          }
+        "upload-extension.output.jsonFile": {
+          "type": "string",
+          "default": "./src/collections.json",
+          "description": "Target location for the output JSON File. Path is relative to the currently opened workspace.",
+          "order": 5
+        },
+        "upload-extension.environment.envFile": {
+          "type": "string",
+          "default": "./.env",
+          "description": "Location of the .env file. Path is relative to the currently opened workspace.",
+          "order": 1
+        },
+        "upload-extension.artifact.artifactFile": {
+          "type": "string",
+          "default": "./artifacts/SimpleERC721.sol/SimpleERC721.json",
+          "description": "Location of the precompiled smart contract code. Path is relative to the currently opened workspace.",
+          "order": 2
+        },
+        "upload-extension.temporary.jsonLocation": {
+          "type": "string",
+          "default": "./upload-extension-temp",
+          "description": "Location of folder to place the json files generated for each NFT. Path is relative to the currently opened workspace.",
+          "order": 3
+        },
+        "upload-extension.temporary.deleteTemporaryJsonAfterDeploy": {
+          "type": "boolean",
+          "default": "True",
+          "description": "Deletes the json files generated for each NFT in the temp folder after they are uploaded to IPFS and the contract has been deployed.",
+          "order": 4
+        }
       }
     },
     "commands": [
@@ -80,20 +87,22 @@
       ],
       "commandPalette": [
         {
-            "command": "upload-extension.upload",
-            "when": "false"
+          "command": "upload-extension.upload",
+          "when": "false"
         },
         {
           "command": "upload-extension.uploadAndMint",
           "when": "false"
-        } 
+        }
       ]
     }
   },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "node ./test/runTest.js"
+    "test": "node ./test/runTest.js",
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.js --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -101,6 +110,7 @@
     "@types/node": "20.2.5",
     "@types/vscode": "^1.79.0",
     "@vscode/test-electron": "^2.3.2",
+    "esbuild": "^0.19.2",
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
