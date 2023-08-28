@@ -73,7 +73,7 @@ function convertImports(text, editorFile, jsonPath, gateway) {
             //     }
             //     break;
             case "ownable":
-                newCode += `let ${files[0].importName} = await ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}")`;
+                newCode += `let ${files[0].importName} = await ${gateway}.urlFromJsonEntry(${jsonName}, "${folder}");`;
                 text = text.replace(files[0].codeLine, newCode);
                 newCode = "";
                 break;
