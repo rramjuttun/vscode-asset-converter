@@ -2,38 +2,18 @@
 
 A VS Code extension for uploading project resources to IPFS and creating NFT Collections from them. Its main purpose is to help onboard game developers to the Web3 stack by providing a way to transition assets from traditional centralized storage to a decentralized environment and to simplify the process of deploying a project to IPFS.
 
-The project management page for this extension is [here](https://github.com/users/rramjuttun/projects/1).
+The marketplace page for the extension is [here](https://marketplace.visualstudio.com/items?itemName=rrmjtn.ipfs-asset-converter).
 \
-The design document for the extension is here [here](https://github.com/rramjuttun/vscode-asset-converter/blob/main/docs/designdoc.md).
+An example of how to use the extension on a simple project is [here](https://github.com/rramjuttun/react-flappy-bird#react-flappy-bird). 
 ## Features
-* Upload directories to IPFS 
+* Upload directories to IPFS from directly within the VS Code workspace
 
-* Create and deploy NFT collections from asset folders
-
-## Requirements and Installation
-
-#### Note on Requirements
-The extension currently only works in a development environment since it has not yet been published. When running as developer, use Node.js `v18.13.0` or `v16.17.1`. Other versions may also work but I have tested and confirmed it working with these two. 
-
-Once published, the Node version will not matter when using the extension since VS code uses its own runtime instance (currently `v16.17.1`).
-
-#### Install
-Clone repo
-```sh
-git clone https://github.com/rramjuttun/vscode-asset-converter.git
-```
-Install dependencies
-```sh
-cd vscode-asset-converter
-npm install
-```
+* Create and deploy a NFT collection from an asset folder containing `.png` images
 
 ## Setup and Configuration
 
-Once installed, press `F5` to start the extension development host or go to `Run > Start Debugging` in the menu bar. This will open up a new VS Code instance with the extension running in it. Open any folder within this instance to use as the workspace.
-
 ### Environment file
-Create a `.env` file in the workspace or add the following to your existing file if one already exists. A `.env-example` file is included in the extension directory. Include the following entries:
+Create a `.env` file in the top-level (by default) of the currently opened workspace (or add the following entries to it if one already exists). A [`.env-example`](https://github.com/rramjuttun/vscode-asset-converter/blob/main/.env-example) file is included in the project repository. Include the following entries:
 
 * `IPFS_API_ENDPOINT` is provided by the IPFS Node of choice (eg. Infura or localhost). The node must resolve to a running instance of the [IPFS Kubo RPC API v0](https://docs.ipfs.tech/reference/kubo/rpc/). Providers with their own custom APIs such as Pinata and NFT.Storage will not work.
 * `IPFS_API_KEY` and `IPFS_API_KEY_SECRET` are used for authentication when using the Infura IPFS service, which is currently the only service which requires authentication headers that this extension supports. If using a provider that does not require authentication headers (eg. localhost or endpoints with authentcation included in the URL) then it is optional.
@@ -95,3 +75,22 @@ After the command is run successfully, an entry of the following format is creat
 * `"type": "ownable"` signifies that this is a NFT collection. Further types may be added in the future.
 
 If the command is run on the same folder again, it will overwrite the old entry with the new one (using `directory` as the search key to find duplicates). Note that previous smart contract address will be replaced and will need to be retreived from the blockchain if needed again.
+
+## Running in a Development Environment
+
+#### Note on Requirements
+I have tested and confirmed the extension working with Node.js `v18.13.0` or `v16.17.1`. Other versions may also work.
+
+
+#### Install
+Clone repo
+```sh
+git clone https://github.com/rramjuttun/vscode-asset-converter.git
+```
+Install dependencies
+```sh
+cd vscode-asset-converter
+npm install
+```
+
+Once installed, press `F5` to start the extension development host or go to `Run > Start Debugging` in the menu bar. This will open up a new VS Code instance with the extension running in it. Open any folder within this instance to use as the workspace.
