@@ -1,6 +1,6 @@
 {
-  "name": "upload-extension",
-  "displayName": "upload-extension",
+  "name": "ipfs-asset-converter",
+  "displayName": "IPFS Asset Converter",
   "publisher": "rrmjtn",
   "license": "MIT",
   "description": "",
