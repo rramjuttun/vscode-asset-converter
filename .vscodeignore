@@ -9,3 +9,5 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 src/**
 node_modules/**
+docs/**
+
