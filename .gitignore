@@ -1,6 +1,7 @@
 node_modules
 .vscode-test/
 *.vsix
+out
 
 test/workspace/*
 !test/workspace/images
