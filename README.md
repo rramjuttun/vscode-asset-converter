@@ -93,4 +93,9 @@ cd vscode-asset-converter
 npm install
 ```
 
-Once installed, press `F5` to start the extension development host or go to `Run > Start Debugging` in the menu bar. This will open up a new VS Code instance with the extension running in it. Open any folder within this instance to use as the workspace.
+Compile
+```sh
+npm run vscode:prepublish
+```
+
+Once installed and compiled, press `F5` to start the extension development host or go to `Run > Start Debugging` in the menu bar. This will open up a new VS Code instance with the extension running in it. Open any folder within this instance to use as the workspace.
