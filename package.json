@@ -93,6 +93,10 @@
         {
           "command": "upload-extension.uploadAndMint",
           "when": "false"
+        },
+        {
+          "command": "upload-extension.testCommand",
+          "when": "false"
         }
       ]
     }
