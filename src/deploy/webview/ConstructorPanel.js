@@ -36,7 +36,7 @@ class ConstructorPanel {
                 retainContextWhenHidden: true,
                 // And restrict the webview to only loading content from our extension's `media` directory.
                 localResourceRoots: [
-                    vscode.Uri.joinPath(extensionUri, "src/deploy/webview"),
+                    vscode.Uri.joinPath(extensionUri, "media"),
                 ],
             }
         );
@@ -91,15 +91,15 @@ class ConstructorPanel {
     _getHtmlForWebview(webview, constructorArgs, overrides) {
         // Add the uri we use to load this script in the webview
         const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "src/deploy/webview", "form.js")
+            vscode.Uri.joinPath(this._extensionUri, "media/form", "form.js")
         );
 
         // Uri to load styles into webview. Using local path to css styles
         const stylesResetUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "src/deploy/webview/media", "reset.css")
+            vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
         );
         const stylesMainUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this._extensionUri, "src/deploy/webview/media", "vscode.css")
+            vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
         );
 
         // Use a nonce to only allow specific scripts to be run
